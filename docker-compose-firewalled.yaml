@@ -9,7 +9,7 @@ services:
 
   api:
     #  image: 42crunch/pixi:v4.7
-    #  container_name: pixiapi
+     container_name: pixiapi
      build: ./app
      ports:
        - "8090:8090"
