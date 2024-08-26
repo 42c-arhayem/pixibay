@@ -8,9 +8,9 @@ services:
       - "28017:28017"
 
   api:
-    #  image: 42crunch/pixi:v4.7
+     image: heshaam/pixi:latest
      container_name: pixiapi
-     build: ./app
+    # build: ./app
      ports:
        - "8090:8090"
      expose:
