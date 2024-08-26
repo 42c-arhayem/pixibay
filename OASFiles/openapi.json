@@ -255,7 +255,7 @@
             ]
           }
         },
-        "security": []
+        "security": access-token []
       }
     },
     "/user/info": {
