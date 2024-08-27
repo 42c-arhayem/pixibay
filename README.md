@@ -22,6 +22,34 @@ This repository supports three deployment architectures:
 
 ## Deployment Instructions
 
+## Getting Started
+
+Before you begin, please make sure to clone this repository to your local machine. This is essential as all the deployment scripts, configurations, and resources are contained within the repository. Follow the steps below to clone the repository:
+
+1. **Clone the Repository:**
+
+   Open your terminal and run the following command to clone the repository:
+
+   ```bash
+   git clone https://github.com/your-username/your-repo-name.git
+   ```
+
+   Replace `your-username` and `your-repo-name` with the appropriate GitHub username and repository name.
+
+2. **Navigate to the Repository Directory:**
+
+   After cloning, navigate into the cloned repository directory:
+
+   ```bash
+   cd your-repo-name
+   ```
+
+3. **Ensure All Necessary Files Are Present:**
+
+   Verify that all necessary files, such as Docker Compose files, scripts, and configuration files, are present in the directory.
+
+Now you're ready to proceed with the deployment and testing as outlined in the below.
+
 ### Standard Deployment
 
 This deployment uses the latest version of the Pixi API, which is intentionally vulnerable to several security issues, making it ideal for testing with 42Crunch.
