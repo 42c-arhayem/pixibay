@@ -66,7 +66,7 @@
           "name": "SCAN42C_USER_INBOUND",
           "from": "environment",
           "required": false,
-          "default": "scan-user@demo.mail"
+          "default": "scanuser@demo.mail"
         },
         "pass_inbound": {
           "name": "SCAN42C_PASS_INBOUND",
@@ -148,8 +148,8 @@
             "requestBody": {
               "mode": "json",
               "json": {
-                "pass": "{{pass_inbound}}",
-                "user": "{{user_inbound}}"
+                "pass": "hellopixi",
+                "user": "scan_user@demo.mail"
               }
             }
           }
@@ -271,7 +271,7 @@
       "request": {
         "operationId": "deleteUser",
         "auth": [
-          "access-token/Admin"
+          "access-token/UsertoDelete"
         ],
         "request": {
           "type": "42c",
@@ -282,7 +282,7 @@
             "paths": [
               {
                 "key": "userid",
-                "value": "{{deleteUserId}}"
+                "value": "{{usertodelete_id}}"
               }
             ]
           }
@@ -308,7 +308,11 @@
       },
       "before": [
         {
-          "$ref": "#/operations/register/request",
+          "$ref": "#/requests/RegisterUser",
+          "environment": {
+            "user_inbound": "usertodelete@demo.mail",
+            "pass_inbound": "hellopixi"
+          },
           "responses": {
             "200": {
               "expectations": {
@@ -316,8 +320,8 @@
               },
               "variableAssignments": {
                 "deleteUserId": {
-                  "from": "response",
                   "in": "body",
+                  "from": "response",
                   "contentType": "json",
                   "path": {
                     "type": "jsonPointer",
@@ -335,7 +339,10 @@
           "requests": [
             {
               "fuzzing": true,
-              "$ref": "#/operations/deleteUser/request"
+              "$ref": "#/operations/deleteUser/request",
+              "environment": {
+                "user_to_delete": "{{deleteUserId}}"
+              }
             }
           ],
           "fuzzing": true
@@ -367,7 +374,7 @@
             "requestBody": {
               "mode": "json",
               "json": {
-                "email": "attacks{{$randomuint}}@demo.mail",
+                "email": "attacks@demo.mail",
                 "name": "Been Hacked"
               }
             }
@@ -392,6 +399,11 @@
           }
         }
       },
+      "after": [
+        {
+          "$ref": "#/operations/edituserinfo/request"
+        }
+      ],
       "scenarios": [
         {
           "key": "happy.path",
@@ -403,9 +415,6 @@
           ],
           "fuzzing": true
         }
-      ],
-      "authorizationTests": [
-        "UserInfoBOLA"
       ]
     },
     "listUserPictures": {
@@ -413,7 +422,7 @@
       "request": {
         "operationId": "listUserPictures",
         "auth": [
-          "access-token"
+          "access-token/Admin"
         ],
         "request": {
           "type": "42c",
@@ -475,7 +484,10 @@
             },
             {
               "fuzzing": true,
-              "$ref": "#/operations/listUserPictures/request"
+              "$ref": "#/operations/listUserPictures/request",
+              "environment": {
+                "user_id": "{{adminUserId}}"
+              }
             },
             {
               "$ref": "#/operations/deletePicture/request",
@@ -512,9 +524,9 @@
               "json": {
                 "account_balance": 150,
                 "is_admin": false,
-                "name": " Test User",
+                "name": "User {{$randomuint}}",
                 "pass": "{{$randomString}}",
-                "user": "scan-user@demo.mail"
+                "user": "scanuser-{{$randomuint}}@demo.mail"
               }
             }
           }
@@ -568,7 +580,7 @@
             {
               "$ref": "#/operations/deleteUser/request",
               "environment": {
-                "deleteUserId": "{{registerUserId}}"
+                "user_to_delete": "{{registerUserId}}"
               }
             }
           ],
@@ -744,6 +756,59 @@
         }
       ]
     },
+    "userSearch": {
+      "operationId": "userSearch",
+      "request": {
+        "operationId": "userSearch",
+        "auth": [
+          "access-token"
+        ],
+        "request": {
+          "type": "42c",
+          "details": {
+            "operationId": "userSearch",
+            "method": "GET",
+            "url": "{{host}}/admin/users/search",
+            "queries": [
+              {
+                "key": "search",
+                "value": "scan_user@demo.mail"
+              }
+            ]
+          }
+        },
+        "defaultResponse": "200",
+        "responses": {
+          "200": {
+            "expectations": {
+              "httpStatus": 200
+            }
+          },
+          "403": {
+            "expectations": {
+              "httpStatus": 403
+            }
+          },
+          "default": {
+            "expectations": {
+              "httpStatus": "default"
+            }
+          }
+        }
+      },
+      "scenarios": [
+        {
+          "key": "happy.path",
+          "requests": [
+            {
+              "fuzzing": true,
+              "$ref": "#/operations/userSearch/request"
+            }
+          ],
+          "fuzzing": true
+        }
+      ]
+    },
     "userinfo": {
       "operationId": "userinfo",
       "request": {
@@ -853,6 +918,10 @@
   "before": [
     {
       "$ref": "#/requests/RegisterAdmin",
+      "environment": {
+        "user_inbound": "admin_user@demo.mail",
+        "pass_inbound": "hellopixi"
+      },
       "responses": {
         "200": {
           "expectations": {
@@ -883,6 +952,10 @@
     },
     {
       "$ref": "#/requests/RegisterUser",
+      "environment": {
+        "user_inbound": "scan_user@demo.mail",
+        "pass_inbound": "hellopixi"
+      },
       "responses": {
         "200": {
           "expectations": {
@@ -890,8 +963,8 @@
           },
           "variableAssignments": {
             "scanUserId": {
-              "from": "response",
               "in": "body",
+              "from": "response",
               "contentType": "json",
               "path": {
                 "type": "jsonPointer",
@@ -899,8 +972,8 @@
               }
             },
             "scanUserToken": {
-              "from": "response",
               "in": "body",
+              "from": "response",
               "contentType": "json",
               "path": {
                 "type": "jsonPointer",
@@ -913,6 +986,10 @@
     },
     {
       "$ref": "#/requests/RegisterUser",
+      "environment": {
+        "user_inbound": "scan_user1@demo.mail",
+        "pass_inbound": "hellopixi"
+      },
       "responses": {
         "200": {
           "expectations": {
@@ -943,21 +1020,16 @@
     },
     {
       "$ref": "#/requests/RegisterUser",
+      "environment": {
+        "user_inbound": "usertodelete@demo.mail",
+        "pass_inbound": "hellopixi"
+      },
       "responses": {
         "200": {
           "expectations": {
             "httpStatus": 200
           },
           "variableAssignments": {
-            "usertodelete_token": {
-              "from": "response",
-              "in": "body",
-              "contentType": "json",
-              "path": {
-                "type": "jsonPointer",
-                "value": "/token"
-              }
-            },
             "usertodelete_id": {
               "from": "response",
               "in": "body",
@@ -965,6 +1037,15 @@
               "path": {
                 "type": "jsonPointer",
                 "value": "/_id"
+              }
+            },
+            "usertodelete_token": {
+              "from": "response",
+              "in": "body",
+              "contentType": "json",
+              "path": {
+                "type": "jsonPointer",
+                "value": "/token"
               }
             }
           }
@@ -983,8 +1064,8 @@
           },
           "variableAssignments": {
             "picture_id": {
-              "in": "body",
               "from": "response",
+              "in": "body",
               "contentType": "json",
               "path": {
                 "type": "jsonPointer",
@@ -1000,25 +1081,25 @@
     {
       "$ref": "#/operations/deleteUser/request",
       "environment": {
-        "deleteUserId": "{{scanAdminId}}"
+        "usertodelete_id": "{{scanAdminId}}"
       }
     },
     {
       "$ref": "#/operations/deleteUser/request",
       "environment": {
-        "deleteUserId": "{{scanUserId}}"
+        "usertodelete_id": "{{scanUserId}}"
       }
     },
     {
       "$ref": "#/operations/deleteUser/request",
       "environment": {
-        "deleteUserId": "{{scanUser1Id}}"
+        "usertodelete_id": "{{scanUser1Id}}"
       }
     },
     {
       "$ref": "#/operations/deleteUser/request",
       "environment": {
-        "deleteUserId": "{{usertodelete_id}}"
+        "usertodelete_id": "{{usertodelete_id}}"
       }
     }
   ],
@@ -1203,6 +1284,39 @@
         }
       }
     },
+    "RegisterUser": {
+      "request": {
+        "type": "42c",
+        "details": {
+          "method": "POST",
+          "url": "{{host}}/user/register",
+          "headers": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "requestBody": {
+            "mode": "json",
+            "json": {
+              "account_balance": 1000,
+              "is_admin": false,
+              "name": "Custom User {{$randomuint}}",
+              "pass": "{{pass_inbound}}",
+              "user": "{{user_inbound}}"
+            }
+          }
+        }
+      },
+      "defaultResponse": "200",
+      "responses": {
+        "200": {
+          "expectations": {
+            "httpStatus": 200
+          }
+        }
+      }
+    },
     "RegisterAdmin": {
       "request": {
         "type": "42c",
@@ -1220,42 +1334,9 @@
             "json": {
               "account_balance": 950,
               "is_admin": true,
-              "name": "Admin User",
-              "pass": "hellopixi",
-              "user": "adminuser{{$randomuint}}@demo.mail"
-            }
-          }
-        }
-      },
-      "defaultResponse": "200",
-      "responses": {
-        "200": {
-          "expectations": {
-            "httpStatus": 200
-          }
-        }
-      }
-    },
-    "RegisterUser": {
-      "request": {
-        "type": "42c",
-        "details": {
-          "method": "POST",
-          "url": "{{host}}/user/register",
-          "headers": [
-            {
-              "key": "Content-Type",
-              "value": "application/json"
-            }
-          ],
-          "requestBody": {
-            "mode": "json",
-            "json": {
-              "account_balance": 950,
-              "is_admin": true,
-              "name": "Scan User {{$randomuint}}",
-              "pass": "hellopixi",
-              "user": "scanuser-{{$randomuint}}@demo.mail"
+              "name": "Custom User {{$randomuint}}",
+              "pass": "{{pass_inbound}}",
+              "user": "{{user_inbound}}"
             }
           }
         }

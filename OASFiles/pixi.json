@@ -401,6 +401,16 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthenticationError401"
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -443,88 +453,6 @@
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/ErrorMessage"
-                                }
-                            }
-                        }
-                    },
-                    "403": {
-                        "description": "invalid or missing token",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/AuthenticationError"
-                                }
-                            }
-                        }
-                    },
-                    "default": {
-                        "description": "unexpected error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/ErrorMessage"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "access-token": []
-                    }
-                ]
-            }
-        },
-        "/admin/users/search": {
-            "get": {
-                "tags": [
-                    "admins"
-                ],
-                "summary": "search for a specific user",
-                "description": "search for a specific user",
-                "operationId": "userSearch",
-                "parameters": [
-                    {
-                        "name": "x-access-token",
-                        "in": "header",
-                        "required": true,
-                        "schema": {
-                            "maxLength": 1000,
-                            "pattern": "^([a-zA-Z0-9_=]{4,})\\.([a-zA-Z0-9_=]{4,})\\.([a-zA-Z0-9_\\-\\+\\/=]{4,})",
-                            "type": "string",
-                            "format": "o:common:JWT",
-                            "minLength": 25,
-                            "x-42c-format": "o:common:JWT"
-                        }
-                    },
-                    {
-                        "name": "search",
-                        "in": "query",
-                        "description": "search query ?search=xxx",
-                        "required": true,
-                        "schema": {
-                          "maxLength": 320,
-                          "pattern": "^(?:[\\w\\-+!#$%&'*/=?^`|{}~]+(?:\\.[\\w\\-+!#$%&'*/=?^`|{}~]+)*)@(?:(?:[A-Za-z0-9](?:[\\w\\-]{0,61}[A-Za-z0-9])?)(?:\\.(?:[A-Za-z0-9](?:[\\w\\-]{0,61}[A-Za-z0-9])?))*\\.[A-Za-z]{2,})$",
-                          "type": "string",
-                          "format": "o:common:email",
-                          "example": "scanuser@test.com",
-                          "minLength": 6,
-                          "x-42c-format": "o:common:email"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "successful authentication user photo json object",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "maxItems": 50,
-                                    "minItems": 0,
-                                    "type": "array",
-                                    "items": {
-                                        "$ref": "#/components/schemas/UsersItem"
-                                    }
                                 }
                             }
                         }
@@ -1343,6 +1271,26 @@
                     "message"
                 ],
                 "description": "403 response"
+            },
+            "AuthenticationError401": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "message": {
+                        "maxLength": 255,
+                        "minLength": 1,
+                        "pattern": "^[\\w\\s\\.\\-@:,;]{1,255}$",
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "success",
+                    "message"
+                ],
+                "description": "401 response"
             }
         },
         "securitySchemes": {
