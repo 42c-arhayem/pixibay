@@ -31,17 +31,15 @@ Before you begin, please make sure to clone this repository to your local machin
    Open your terminal and run the following command to clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/your-repo-name.git
+   git clone https://github.com/42c-arhayem/pixibay.git
    ```
-
-   Replace `your-username` and `your-repo-name` with the appropriate GitHub username and repository name.
 
 2. **Navigate to the Repository Directory:**
 
    After cloning, navigate into the cloned repository directory:
 
    ```bash
-   cd your-repo-name
+   cd pixibay
    ```
 
 3. **Ensure All Necessary Files Are Present:**
