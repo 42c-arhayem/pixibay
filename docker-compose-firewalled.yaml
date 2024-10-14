@@ -31,8 +31,8 @@ services:
       - PROTECTION_TOKEN=${PROTECTION_TOKEN}
       - GUARDIAN_NODE_NAME=Local-Firewall
       - GUARDIAN_INSTANCE_NAME=Local-Firewall
-      # - LISTEN_SSL_CERT=firewall-cert.pem
-      # - LISTEN_SSL_KEY=firewall-key.pem
+      - LISTEN_SSL_CERT=firewall-cert.pem
+      - LISTEN_SSL_KEY=firewall-key.pem
       - LISTEN_NO_TLS=true
       - LOG_LEVEL=DEBUG
       - TARGET_URL=http://api:8090

@@ -255,7 +255,11 @@
             ]
           }
         },
-        "security": access-token []
+        "security": [
+          {
+            "access-token": []
+          }
+        ]
       }
     },
     "/user/info": {
