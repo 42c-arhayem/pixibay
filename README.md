@@ -84,59 +84,11 @@ docker-compose -f docker-compose-firewalled.yaml up
 ```
 
 **Configuration:**
-- **API Image**: `heshaam/pixi:latest`
+- **API Image**: `heshaam/pixi:latest` 
 - **API Firewall Image**: `42crunch/apifirewall:latest`
 - **Ports**: 
   - API Firewall listens on port `8080`.
   - API service listens on port `8090`.
 
 **Important:** Before deploying the firewall, **update the `PROTECTION_TOKEN`** value in the `.env` file. This token is required for the firewall to function properly and connect to the 42Crunch Platform.
-
-## Demonstrating 42Crunch Testing Capabilities
-
-### Step 1: Scan the Vulnerable API
-
-Deploy the standard version of the Pixi API and use 42Crunch to perform a full security scan. The scan will identify numerous vulnerabilities, many of which correspond to the OWASP Top 10 API Security Risks.
-
-### Step 2: Analyze the Results
-
-Review the findings from the 42Crunch scan. The report will highlight specific security flaws, including those related to:
-- **Broken Object Level Authorization (API1)**
-- **Broken User Authentication (API2)**
-- **Sensitive Data Exposure (API3)**
-- **Broken Function Level Authorization (API5)**
-- **Privilege Escalation (API6)**
-
-### Step 3: Apply the Patch
-
-Switch to the patched deployment to address the vulnerabilities identified in the previous step. Deploy the patched version and run another 42Crunch scan.
-
-### Step 4: Validate the Fixes
-
-Analyze the new scan results. You should observe a significant reduction in the number of vulnerabilities, demonstrating the effectiveness of the patches. This step validates that the security issues identified by 42Crunch have been successfully resolved.
-
-### Step 5: Enhance Security with API Firewall
-
-For further protection, deploy the firewalled version of the Pixi API. This setup showcases how 42Crunch’s API firewall can provide real-time protection against API threats.
-
-## Vulnerabilities and Fixes in the Patched Version
-
-The vulnerabilities identified in the Pixi API (latest version) and their corresponding fixes in the patched version are as follows:
-
-1. **API1 (Broken Object Level Authorization):** Unauthorized users can delete pictures belonging to other users.  
-   **Fix:** Added checks to ensure only the owner of the picture can delete it.
-
-2. **API2 (Broken User Authentication):** Insufficient authorization checks allow non-admin users to delete other users and view all users.  
-   **Fix:** Implemented stricter role-based access control to ensure that only admin users can delete other users or access the full user list.
-
-3. **API3 (Sensitive Data Exposure):** Sensitive user information, including passwords, is included in JWT tokens.  
-   **Fix:** JWT tokens no longer include sensitive user information such as passwords.
-
-5. **API5 (Broken Function Level Authorization):** Users can perform actions beyond their intended permissions due to lack of role-based access control, such as generating tokens with improper parameters.  
-   **Fix:** Enforced proper role-based access control to restrict access to sensitive operations.
-
-6. **API6 (Privilege Escalation):** Users can escalate privileges to become an admin by modifying the `is_admin` flag.  
-   **Fix:** Users cannot escalate privileges by modifying the `is_admin` flag.
-
-These vulnerabilities were identified and fixed in the `heshaam/pixi:patched` version. Use the patched version to avoid these security issues.
 
